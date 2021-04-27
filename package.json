@@ -1,5 +1,7 @@
 {
   "name": "dashgo",
+  "author": "Luiz Oliveira <luiiz.silverio@gmail.com>",
+  "repository": "https://github.com/luiizsilverio/dashgo",
   "version": "0.1.0",
   "private": true,
   "scripts": {

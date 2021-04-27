@@ -29,7 +29,7 @@ export function myServer() {
         },
 
         seeds(server) {  // inclusão de dados em massa (200 usuários)
-            server.createList('user', 200)
+            server.createList('user', 20)
         },
 
         routes() {
