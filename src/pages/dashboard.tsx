@@ -9,6 +9,9 @@ import { Sidebar } from '../components/Sidebar'
 // renderizado no browser do cliente, e não no servidor Node.
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
+type tpXaxis = 'category' | 'datetime' | 'numeric'
+const tpData: tpXaxis = 'datetime'
+
 const options = {
    chart: {
       toolbar: {
@@ -29,7 +32,7 @@ const options = {
       enabled: false,
    },
    xaxis: {
-      type: 'datetime',
+      type: tpData,
       axisBorder: {
          color: theme.colors.gray[600]
       },
