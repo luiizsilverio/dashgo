@@ -2,44 +2,18 @@ import { Box, Flex, Button, Heading, Icon, Spinner } from '@chakra-ui/react'
 import { Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react'
 import { Checkbox, Text, useBreakpointValue } from '@chakra-ui/react'
 import { RiAddLine, RiPencilLine } from 'react-icons/ri'
-import { useQuery } from 'react-query'
 //import Link from 'next/link'
 
 import { Header } from '../../components/Header'
 import { Sidebar } from '../../components/Sidebar'
 import { Pagination } from '../../components/Pagination'
-import { useEffect } from 'react'
+import { useUsers } from '../../services/hooks/useUsers'
 
 export default function UserList() {
 
-   const { data, isLoading, error } = useQuery('usuarios', async () => {
-      const response = await fetch('http://localhost:3000/api/users')
-      const data = await response.json()
-      
-      const users = data.users.map(user => {
-         return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            created_at: new Date(user.created_at)
-               .toLocaleDateString('pt-BR', {
-                  day: '2-digit',
-                  month: 'long',
-                  year: 'numeric'
-               })
-         }
-      })
-
-      return users
-   }, { 
-      staleTime: 1000 * 5 
-      // Esse segundo parâmetro staleTime é opcional.
-      // Se for informado, define o tempo que o react-query
-      // vai buscar novamente os dados. No caso, após 5 seg.
-      // Antes de 5 segundos, os dados são considerados "Fresh".
-      // Após 5 seg, são considerados stale (antigo), e faz refresh.
-   })  
-
+   // isLoading é o 1.o carregamento dos dados
+   const { data, isLoading, isFetching, error } = useUsers()
+   
    const isTelaGrande = useBreakpointValue({
       base: false,
       lg: true
@@ -54,7 +28,15 @@ export default function UserList() {
 
             <Box flex="1" borderRadius={8} bg="gray.800" p="8">
                <Flex mb="8" justifyContent="space-between" align="center">
-                  <Heading size="lg" fontWeight="normal">Usuários</Heading>
+                 
+                  <Heading 
+                     size="lg" 
+                     fontWeight="normal"
+                  >
+                     Usuários
+                     { !isLoading && isFetching && 
+                        <Spinner color="gray.500" ml="4" /> }
+                  </Heading>
                   
                   {/*<Link href="/users/create" passHref>*/}
                   <Button 
@@ -126,7 +108,11 @@ export default function UserList() {
                      </Tbody>
                   </Table>
 
-                  <Pagination />
+                  <Pagination 
+                     totalCountOfRegisters={200}
+                     currentPage={19}
+                     onPageChange={() => {}}
+                  />
                   </>
                )}
 
