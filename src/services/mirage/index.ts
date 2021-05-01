@@ -1,4 +1,4 @@
-import { createServer, Factory, Model, Response } from 'miragejs'
+import { createServer, Factory, Model, Response, ActiveModelSerializer } from 'miragejs'
 import faker from 'faker'
 
 type User = {
@@ -9,11 +9,19 @@ type User = {
 
 export function myServer() {
     const server = createServer({
+
+        // Tabelas do banco
         models: {
             user: Model.extend<Partial<User>>({})
         },
 
-        factories: {  // geração de dados aleatórios
+        // Permite gravar/obter dados de 2 tabelas de 1 vez
+        serializers: {  
+            application: ActiveModelSerializer
+        },
+
+        // Geração de dados aleatórios
+        factories: {  
             user: Factory.extend({
                 name(i: number) {
                     return faker.name.firstName() +' '+ faker.name.lastName()
@@ -28,7 +36,8 @@ export function myServer() {
             })
         },
 
-        seeds(server) {  // inclusão de dados em massa (200 usuários)
+        // Inclusão de dados em massa (200 usuários)
+        seeds(server) {  
             server.createList('user', 200)
         },
 
@@ -47,7 +56,9 @@ export function myServer() {
                 const pageEnd = pageStart + Number(per_page)
                 
                 const users = this.serialize(schema.all('user'))
-                    .users.slice(pageStart, pageEnd)
+                    .users
+                    //.sort((a, b) => b.name < a.name) não funciona
+                    .slice(pageStart, pageEnd)
 
                 return new Response(
                     200, // status code
@@ -55,6 +66,8 @@ export function myServer() {
                     { users }
                 )
             })
+            
+            this.get('/users/:id')
             
             this.namespace = ''   // se o namespace não for 'api', não precisa disso.
             this.passthrough()    

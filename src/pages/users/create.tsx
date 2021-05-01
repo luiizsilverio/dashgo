@@ -3,10 +3,14 @@ import { VStack, HStack, Button } from '@chakra-ui/react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from 'react-query'
+import { useRouter } from 'next/router'
 
 import { Header } from '../../components/Header'
 import { Sidebar } from '../../components/Sidebar'
 import { Input } from '../../components/Form/Input'
+import { api } from '../../services/api'
+import { queryClient } from '../../services/queryClient'
 
 type CreateUserFormData = {
    name: string
@@ -23,6 +27,23 @@ type CreateUserFormData = {
  })
  
 export default function CreateUser() {
+   const router = useRouter()
+   
+   const createUser = useMutation(async (user: CreateUserFormData) => {
+      const response = await api.post('users', {
+         user: {
+            ...user,
+            created_at: new Date(),
+         }
+      })
+
+      return response.data.user
+   }, {
+      onSuccess: () => {
+         queryClient.invalidateQueries('users')
+      }
+   })
+
    const { register, handleSubmit, formState } = useForm({
       resolver: yupResolver(createUserSchema)
     })
@@ -30,8 +51,10 @@ export default function CreateUser() {
    const errors = formState.errors
 
    //const handleCreateUser: SubmitHandler<CreateUserFormData) = (values) => {
-   function handleCreateUser(values: CreateUserFormData) {
-      console.log(values)
+   async function handleCreateUser(values: CreateUserFormData) {
+      await createUser.mutateAsync(values)
+
+      router.push('/users') //volta para a listagem de usuários
    }
 
    return (
@@ -91,12 +114,16 @@ export default function CreateUser() {
                      <Button as="a" 
                         colorScheme="whiteAlpha"
                         href="/users"
-                        type="submit" 
-                        isLoading={formState.isSubmitting}
                      >
                         Cancelar
                      </Button>
-                     <Button colorScheme="messenger">Salvar</Button>
+                     <Button 
+                        type="submit" 
+                        isLoading={formState.isSubmitting}
+                        colorScheme="messenger"
+                     >
+                        Salvar
+                     </Button>
                   </HStack>
                </Flex>
             </Box>               

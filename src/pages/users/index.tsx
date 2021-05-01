@@ -1,23 +1,38 @@
+import { useState } from 'react'
 import { Box, Flex, Button, Heading, Icon, Spinner } from '@chakra-ui/react'
-import { Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react'
+import { Link, Table, Thead, Tbody, Tr, Th, Td } from '@chakra-ui/react'
 import { Checkbox, Text, useBreakpointValue } from '@chakra-ui/react'
 import { RiAddLine, RiPencilLine } from 'react-icons/ri'
-//import Link from 'next/link'
 
 import { Header } from '../../components/Header'
 import { Sidebar } from '../../components/Sidebar'
 import { Pagination } from '../../components/Pagination'
 import { useUsers } from '../../services/hooks/useUsers'
+import { queryClient } from '../../services/queryClient'
+import { api } from '../../services/api'
 
 export default function UserList() {
+   const [curPage, setCurPage] = useState(1)
 
    // isLoading é o 1.o carregamento dos dados
-   const { data, isLoading, isFetching, error } = useUsers()
+   const { data, isLoading, isFetching, error } = useUsers(curPage)
    
    const isTelaGrande = useBreakpointValue({
       base: false,
       lg: true
    })
+
+   // Ao passar o mouse sobre o nome do usuário, o react-query 
+   // pré-carrega os dados do usuário e armazena em cache
+   async function handlePrefetchUser(userId: string) {
+      await queryClient.prefetchQuery(['user', userId], async () => {
+         const response = await api.get(`users/${userId}`)
+
+         return response.data
+      }, {
+         staleTime: 1000 * 60 * 10 // 10 minutos
+      })
+   }
 
    return (
       <Box>
@@ -77,14 +92,19 @@ export default function UserList() {
                      </Thead>
                      <Tbody>
 
-                        { data.map(user => (
+                        { data.users.map(user => (
                            <Tr key={ user.id }>
                            <Td px={["4", "4", "6"]} >
                               <Checkbox colorScheme="messenger" />
                            </Td>
                            <Td>
                               <Box>
-                                 <Text fontWeight="bold">{ user.name }</Text>
+                                 <Link 
+                                    color="messenger.100"
+                                    onMouseEnter={() => handlePrefetchUser(user.id)}
+                                 >
+                                    <Text fontWeight="bold">{ user.name }</Text>
+                                 </Link>
                                  <Text fontSize="sm" color="gray.300">
                                     { user.email }
                                  </Text>
@@ -109,9 +129,9 @@ export default function UserList() {
                   </Table>
 
                   <Pagination 
-                     totalCountOfRegisters={200}
-                     currentPage={19}
-                     onPageChange={() => {}}
+                     totalCountOfRegisters={data.totalCount}
+                     currentPage={curPage}
+                     onPageChange={setCurPage}
                   />
                   </>
                )}

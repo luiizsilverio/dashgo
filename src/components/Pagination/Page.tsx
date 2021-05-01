@@ -3,9 +3,10 @@ import { Button } from '@chakra-ui/react'
 type PageProps = {
    isCurrent?: boolean
    number: number
+   onPageChange: (page: number) => void
 }
 
-export function Page({ isCurrent = false, number }: PageProps) {
+export function Page({ isCurrent = false, number, onPageChange }: PageProps) {
    if (isCurrent) {
       return (
          <Button 
@@ -32,6 +33,7 @@ export function Page({ isCurrent = false, number }: PageProps) {
             _hover={{
                bg: 'gray.500',
             }}
+            onClick={() => onPageChange(number)}
             >
             { number }
          </Button>
