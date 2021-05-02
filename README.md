@@ -2,6 +2,13 @@
 Projeto desenvolvido durante o Ignite React da __Rocketseat__,<br />
 que mostra um Dashboard com gráfico, cadastro de usuários.
 
+## Rotas da aplicação
+| Descrição da Rota | Caminho da Rota |
+|---|---|
+| Login | localhost:3000 | 
+| Dashboard | localhost:3000/dashboard | 
+| Usuários | localhost:3000/users |
+
 ## :hammer_and_wrench: Tecnologias
 * <ins>React</ins>
 * <ins>NextJs</ins>
