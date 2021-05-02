@@ -1,6 +1,9 @@
-# dashgo
+# dashgo 
 Projeto desenvolvido durante o Ignite React da __Rocketseat__,<br />
 que mostra um Dashboard com gráfico, cadastro de usuários.
+
+![](https://img.shields.io/github/languages/count/luiizsilverio/dashgo)
+![](https://img.shields.io/github/languages/top/luiizsilverio/dashgo)
 
 ## Rotas da aplicação
 | Descrição da Rota | Caminho da Rota |
