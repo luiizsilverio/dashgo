@@ -34,7 +34,7 @@ que mostra um Dashboard com gráfico e também um cadastro de usuários.
 * <ins>Faker</ins>, uma biblioteca que gera dados aleatórios
 
 ## :camera_flash: Screenshots
-![](https://github.com/luiizsilverio/dashgo/blob/main/src/public/dashgo.gif)
+![](https://github.com/luiizsilverio/dashgo/blob/main/public/dashgo.gif)
 
 ## :balance_scale: Licença
 Este projeto está licenciado sob a [licença MIT](LICENSE).
